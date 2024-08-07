@@ -103,8 +103,6 @@ export const loginController = async (req, res, next) => {
 
 export const tokenLoginController = async (req, res, next) => {
   try {
-    console.log(req.body);
-
     const decryptedToken = jwt.verify(req.body.token, process.env.JWT_SECRET);
     const user = await getUser(decryptedToken._id);
     if (user) {

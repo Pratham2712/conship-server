@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { authRouter } from "./Routes/authRoute.js";
+import { mainRouter } from "./Routes/mainRoute.js";
 
 dotenv.config();
 
@@ -30,7 +31,7 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/auth", authRouter);
-// app.use("/book", bookRouter);
+app.use("/main", mainRouter);
 
 app.listen(5000, () => {
   console.log("Listening on port 5000");
