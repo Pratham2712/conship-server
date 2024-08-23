@@ -5,6 +5,7 @@ import {
   checkUserService,
   loginService,
   getUser,
+  checkEmailService,
 } from "../service/authService.js";
 
 export const checkUserController = async (req, res, next) => {
@@ -25,18 +26,45 @@ export const checkUserController = async (req, res, next) => {
     }
   } catch (error) {}
 };
+export const checkEmailController = async (req, res, next) => {
+  try {
+    const result = await checkEmailService(req.body.data);
+    if (result.length) {
+      return res.status(200).json({
+        type: FAILURE,
+        message: "Email is already registered",
+        data: true,
+      });
+    } else {
+      return res.status(200).json({
+        type: SUCCESS,
+        data: false,
+        message: "",
+      });
+    }
+  } catch (error) {}
+};
 
 export const registerController = async (req, res, next) => {
   try {
     const data = {
       username: req.body?.username,
       password: req.body?.password,
+      email: req.body?.email,
     };
     const isUser = await checkUserService(req.body.username);
     if (isUser.length) {
       return res.status(400).json({
         type: FAILURE,
         message: "User already exist",
+        errors: [],
+      });
+    }
+    const isEmail = await checkEmailService(req.body.email);
+    if (isEmail.length) {
+      return res.status(400).json({
+        type: FAILURE,
+        message: "Email already exist",
         errors: [],
       });
     }
@@ -67,12 +95,13 @@ export const registerController = async (req, res, next) => {
 };
 
 export const loginController = async (req, res, next) => {
-  try {
-    const user = await checkUserService(req.body?.username);
+  try {  
+
+    const user = await checkEmailService(req.body?.email);
     if (user.length < 1) {
       return res.status(400).json({
         type: FAILURE,
-        message: "incorrect username and password",
+        message: "incorrect email and password",
       });
     } else {
       const storedPassword = user[0].password;
@@ -92,7 +121,7 @@ export const loginController = async (req, res, next) => {
       } else {
         return res.status(400).json({
           type: FAILURE,
-          message: "incorrect username and password",
+          message: "incorrect email and password",
         });
       }
     }

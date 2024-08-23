@@ -7,13 +7,19 @@ export const checkUserService = async (data) => {
   return res;
 };
 
+export const checkEmailService = async (data) => {
+  const res = await userModel.find({ email: data });
+  return res;
+};
+
 const hashPassword = promisify(bcrypt.hash);
-export const loginService = async (data) => {
+export const loginService = async (data) => {  
   const saltRounds = 10;
   const hashedPassword = await hashPassword(data.password, saltRounds);
   const res = await userModel.create({
     username: data.username,
     password: hashedPassword,
+    email:data.email
   });
   return res;
 };
